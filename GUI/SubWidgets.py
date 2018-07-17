@@ -79,7 +79,7 @@ class TextBoxHandler(qtW.QPlainTextEdit, logging.Handler):
         logging.Handler.__init__(self)
         self.setReadOnly(True)
         self.setLevel(logging.INFO)
-        self.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s: %(message)s'))
+        self.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
 
     def emit(self, record):
         self.appendPlainText(self.format(record))

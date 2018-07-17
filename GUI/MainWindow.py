@@ -4,16 +4,14 @@ import logging
 
 
 class MainWindow(qtW.QMainWindow):
-    log_freq = 100
     logger = logging.getLogger('GUI_sys')
 
     def __init__(self):
         super().__init__()
-        self.file = None
+        self.file = ""
         self.setGeometry(300, 300, 1280, 720)
         self.statusBar()
-        # self.timerLog = QtCore.QTimer(parent=self)
-        # self.timerLog.timeout.connect(self.updateLog)
+        setattr(self.statusBar(), 'showMessage', self.start_time_deco(self.statusBar().showMessage))
 
         act_load = qtW.QAction(QtGui.QIcon.fromTheme('document-open'), 'Open', parent=self)
         act_save = qtW.QAction(QtGui.QIcon.fromTheme('document-save'), 'Save', parent=self)
@@ -36,26 +34,30 @@ class MainWindow(qtW.QMainWindow):
     def openFile(self):
         self.setDisabled(True)
         self.file, filt = qtW.QFileDialog.getOpenFileName(parent=self, caption='Open File...')
-        self.statusBar().showMessage('Opening ' + self.file)
-        self.logger.info("test")
-        # TODO: actually load data
+        if self.file:
+            self.statusBar().showMessage('Opening ' + self.file)
+            self.logger.info("Opening file" + self.file)
+            # TODO: actually load data
+        else:
+            self.statusBar().showMessage('No file selected')
         self.setDisabled(False)
-        self.statusBar().clearMessage()
 
     def saveFile(self):
-        self.lock()
-        self.statusBar().showMessage('Saving ' + self.file)
-        # TODO: save
-        self.statusBar().clearMessage()
-
-    # def updateLog(self):
-    #     for logger in self.loggers:
-    #         logger.print(self.log)
-
-    def show(self):
-        super().show()
-        # self.timerLog.start(self.log_freq)
+        self.setDisabled(True)
+        if self.file:
+            self.statusBar().showMessage('Saving ' + self.file)
+            # TODO: save
+        else:
+            self.statusBar().showMessage('No file loaded!')
+            self.logger.warning("Cannot save when file is not open")
+        self.setDisabled(False)
 
     def setDisabled(self, a0: bool):
         self.toolbar.setDisabled(a0)
         self.centralWidget().setDisabled(a0)
+
+    def start_time_deco(self, fun):
+        def timer_wrapper(*args, **kwargs):
+            QtCore.QTimer(parent=self).singleShot(6000, self.statusBar().clearMessage)
+            fun(*args, **kwargs)
+        return timer_wrapper

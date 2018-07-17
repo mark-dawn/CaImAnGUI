@@ -14,7 +14,9 @@ class MainWidget(qtW.QWidget):
         line.setFrameShadow(qtW.QFrame.Sunken)
         line.setFrameShape(qtW.QFrame.HLine)
 
-        self.sublayouts = {'over': OverallView(parent=self), 'btns': FunctionButtons(parent=self), 'work_area': EvaluationArea(parent=self)}
+        self.sublayouts = {'over': OverallView(parent=self),
+                           'btns': FunctionButtons(parent=self),
+                           'work_area': EvaluationArea(parent=self)}
 
         layout = qtW.QVBoxLayout(self)
         layout.addLayout(self.sublayouts['over'], stretch=4)
